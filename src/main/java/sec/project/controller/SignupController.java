@@ -25,8 +25,8 @@ public class SignupController {
     }
 
     @RequestMapping(value = "/form", method = RequestMethod.POST)
-    public String submitForm(@RequestParam String name, @RequestParam String address) {
-        signupRepository.save(new Signup(name, address));
+    public String submitForm(@RequestParam String name, @RequestParam String address, @RequestParam(value = "publicReg", required = false) boolean publicReg) {
+        signupRepository.save(new Signup(name, address, publicReg));
         return "done";
     }
 
