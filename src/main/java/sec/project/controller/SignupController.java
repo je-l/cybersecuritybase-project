@@ -1,7 +1,10 @@
 package sec.project.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,10 +27,22 @@ public class SignupController {
         return "form";
     }
 
+    @RequestMapping(value = "/done", method = RequestMethod.GET)
+    public String loadDone(Model model) {
+        List<Signup> signups = signupRepository
+                .findAll()
+                .stream()
+                .filter(signup -> signup.isPublic())
+                .collect(Collectors.toList());
+        
+        model.addAttribute("signups", signups);
+        return "done";
+    }
+
     @RequestMapping(value = "/form", method = RequestMethod.POST)
     public String submitForm(@RequestParam String name, @RequestParam String address, @RequestParam(value = "publicReg", required = false) boolean publicReg) {
         signupRepository.save(new Signup(name, address, publicReg));
-        return "done";
+        return "redirect:/done";
     }
 
 }

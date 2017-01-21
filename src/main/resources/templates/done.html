@@ -7,5 +7,12 @@
 
         <h1>Thank you! You have been signed up to the event!</h1>
 
+        <h3>List of people who have signed up to the event: (Who have agreed for public listing)</h3>
+        <ul>
+            <li th:each="signup : ${signups}">
+                <span th:text="${signup.name}"></span> 
+            </li>
+        </ul>
+
     </body>
 </html>
