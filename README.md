@@ -23,6 +23,7 @@ The server should now run at port 8080
 3. Register to the event.
 4. Enter `' OR TRUE --` to the filter field.
 5. Click filter
+6. Now non-public registrations are displayed, incorrectly. 
 
 Changing the database queries into prepared statements would fix this problem.
 So instead of
@@ -43,8 +44,7 @@ with prepared statements.
 4. Now alert box is displayed in the registree page, and attacker could exploit
    the flaw with javascript.
 
-Now non-public registration are displayed, incorrectly. (Clear the database
-entries by deleting .db files in db directory)
+(Clear the database entries by deleting .db files in db directory)
 
 Changing the input prompt value from unescaped to escaped in done.html file
 should fix this problem.
