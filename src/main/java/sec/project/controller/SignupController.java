@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +18,7 @@ public class SignupController {
 
     @Autowired
     private SignupRepository signupRepository;
-    
+
     @Autowired
     private CustomUserDetailsService signupDatabase;
 
@@ -56,6 +57,19 @@ public class SignupController {
 
         model.addAttribute("signups", signups);
         return "done";
+    }
+
+    @RequestMapping(value = "/signups/{id}", method = RequestMethod.GET)
+    public String signup(@PathVariable(value = "id") Long id, Model model) {
+        Signup signup = signupRepository.findOne(id);
+        model.addAttribute("signup", signup);
+        if (signup.isPublic()) {
+            model.addAttribute("publicness", "Registration is public");
+        } else {
+            model.addAttribute("publicness", "Registration is not public");
+        }
+
+        return "signuppage";
     }
 
 }
