@@ -55,4 +55,21 @@ should fix this problem.
 3. Private information is now displayed.
 
 Requiring authentication of users before giving the signup page would fix this
-problem. Only the personal page would be viewable.
+problem. Only the personal page should be viewable.
+
+### CSRF
+1. Make sure database is in original state: remove all .db files in db/
+   directory (if any).
+2. Start server.
+3. Go to `http://localhost:8080/`
+4. Register to the event with name `<img src="http://localhost:8080/signups/1/delete" width="0" height="0" />`
+5. Select registration as public.
+6. Now when registree list is opened, Jack's signup will be removed.
+
+The server doesn't have any authentication, so anyone opening the done.html
+page will cause Jack to be removed from the list. Normally this flaw would 
+happen only when Jack opens the page. Using a session token in url or http
+request would be a solution for this flaw. Also escaping the name string
+so that img tags could not be used.
+
+Delete the .db files to revert the database to original state.

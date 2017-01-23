@@ -46,8 +46,8 @@ public class SignupController {
 
     @RequestMapping(value = "/form", method = RequestMethod.POST)
     public String submitForm(@RequestParam String name, @RequestParam String address, @RequestParam(value = "publicReg", required = false) boolean publicReg) {
-        signupRepository.save(new Signup(name, address, publicReg));
-        signupDatabase.saveUserToDatabase(name, address, publicReg);
+        Signup sig = signupRepository.save(new Signup(name, address, publicReg));
+        signupDatabase.saveUserToDatabase(sig);
         return "redirect:/done";
     }
 
@@ -70,6 +70,21 @@ public class SignupController {
         }
 
         return "signuppage";
+    }
+
+    @RequestMapping(value = "/signups/{id}/delete", method = RequestMethod.GET)
+    public String delete(@PathVariable(value = "id") Long id, Model model) {
+        Signup signup = signupRepository.findOne(id);
+        if (signup == null) {
+            return "404";
+        }
+        model.addAttribute("signup", signup);
+        
+        signupRepository.delete(id);
+        signupDatabase.removeUserFromDatabase(id);
+        
+        
+        return "deleted";
     }
 
 }

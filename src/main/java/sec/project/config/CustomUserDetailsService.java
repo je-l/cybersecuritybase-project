@@ -58,7 +58,7 @@ public class CustomUserDetailsService {
     }
 
     public List<Signup> loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<Signup> singups = new ArrayList<>();
+        List<Signup> signups = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(databaseAddress, "sa", "")) {
             String query = "SELECT * FROM Signup WHERE name = '" + username + "' AND publicness = TRUE";
             ResultSet resultSet = connection.createStatement().executeQuery(query);
@@ -67,28 +67,38 @@ public class CustomUserDetailsService {
                 String name = resultSet.getString("name");
                 String address = resultSet.getString("address");
                 boolean publicness = resultSet.getBoolean("publicness");
-                singups.add(new Signup(name, address, publicness));
+                signups.add(new Signup(name, address, publicness));
 
             }
         } catch (Exception e) {
             System.out.println("Error: " + e);
         }
 
-        return singups;
+        return signups;
     }
 
-    public void saveUserToDatabase(String user, String address, boolean publicness) {
+    public void saveUserToDatabase(Signup sig) {
         try (Connection connection = DriverManager.getConnection(databaseAddress, "sa", "")) {
             String query = "INSERT INTO Signup (id, name, address, publicness) VALUES (?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, new Random().nextInt(1000000000));
-            statement.setString(2, user);
-            statement.setString(3, address);
-            statement.setBoolean(4, publicness);
-            System.out.println("Tryign to insert: " + statement.toString());
+            statement.setLong(1, sig.getId());
+            statement.setString(2, sig.getName());
+            statement.setString(3, sig.getAddress());
+            statement.setBoolean(4, sig.isPublic());
             statement.executeUpdate();
         } catch (Exception e) {
-            System.out.println("Error: " + e);
+            System.out.println("Error inserting new user into db: " + e);
+        }
+    }
+    
+    public void removeUserFromDatabase(long id) {
+        try (Connection connection = DriverManager.getConnection(databaseAddress, "sa", "")) {
+            String query = "DELETE FROM Signup WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (Exception e) { 
+            System.out.println("Error removing user from db: " + e);
         }
     }
 
