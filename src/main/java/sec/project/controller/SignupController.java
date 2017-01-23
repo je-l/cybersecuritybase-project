@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import sec.project.config.CustomUserDetailsService;
 import sec.project.domain.Signup;
 import sec.project.repository.SignupRepository;
 
@@ -16,6 +17,9 @@ public class SignupController {
 
     @Autowired
     private SignupRepository signupRepository;
+    
+    @Autowired
+    private CustomUserDetailsService signupDatabase;
 
     @RequestMapping("*")
     public String defaultMapping() {
@@ -34,7 +38,7 @@ public class SignupController {
                 .stream()
                 .filter(signup -> signup.isPublic())
                 .collect(Collectors.toList());
-        
+
         model.addAttribute("signups", signups);
         return "done";
     }
@@ -42,7 +46,16 @@ public class SignupController {
     @RequestMapping(value = "/form", method = RequestMethod.POST)
     public String submitForm(@RequestParam String name, @RequestParam String address, @RequestParam(value = "publicReg", required = false) boolean publicReg) {
         signupRepository.save(new Signup(name, address, publicReg));
+        signupDatabase.saveUserToDatabase(name, address, publicReg);
         return "redirect:/done";
+    }
+
+    @RequestMapping(value = "/done", method = RequestMethod.POST)
+    public String filter(@RequestParam String searchTerm, Model model) {
+        List<Signup> signups = signupDatabase.loadUserByUsername(searchTerm);
+
+        model.addAttribute("signups", signups);
+        return "done";
     }
 
 }
