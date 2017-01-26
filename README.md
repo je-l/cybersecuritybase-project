@@ -5,6 +5,8 @@ want the registration be public or not.
 
 ### Installation
 
+With maven:
+
 `git clone`
 
 `cd` into repo
@@ -73,3 +75,20 @@ request would be a solution for this flaw. Also escaping the name string
 so that img tags could not be used.
 
 Delete the .db files to revert the database to original state.
+
+### Using Components with Known Vulnerabilities
+[OWASP Dependency Check](https://www.owasp.org/index.php/OWASP_Dependency_Check)
+was used to identify this flaw. The tool reported one of the flaws to be
+[CVE-2016-9878](https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2016-9878).
+This project is using Spring boot framework, which has spring core as a
+dependency.  Spring core version is 4.3.4 so the project has known unsafe
+component.
+
+To view all of the project dependencies:
+
+1. `cd` into project dir where pom.xml is.
+2. `mvn dependency:list` or just `mvn dependency:list grep spring-core`
+3. Spring framework core version 4.3.4 should be listed.
+
+This flaw can be fixed by changing the parent artifact version in pom.xml from
+version 1.4.2 to version 1.4.3
